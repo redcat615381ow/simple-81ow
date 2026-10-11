@@ -1,33 +1,32 @@
 """Simple 2D grid game prototype."""
+WIDTH, HEIGHT = 10, 10
+
+def init_grid(p_pos):
+    return [['.' for _ in range(WIDTH)] for _ in range(HEIGHT)]
+
+def draw(grid, p_pos):
+    g = [row[:] for row in grid]
+    x, y = p_pos
+    g[y][x] = 'P'
+    print("\n".join("".join(row) for row in g))
+
+def move(p_pos, key):
+    x, y = p_pos
+    if key == 'w' and y > 0: y -= 1
+    elif key == 's' and y < HEIGHT-1: y += 1
+    elif key == 'a' and x > 0: x -= 1
+    elif key == 'd' and x < WIDTH-1: x += 1
+    return x, y
 
 def main():
-    grid = [
-        list("P...."),
-        list("..#.."),
-        list("..#.."),
-        list("..#.."),
-        list("....G")
-    ]
-    moves = {'w': (-1, 0), 's': (1, 0), 'a': (0, -1), 'd': (0, 1)}
+    pos = (0, 0)
     while True:
-        for row in grid:
-            print(''.join(row))
-        cmd = input("Move (w/a/s/d): ").lower()
-        if cmd not in moves:
-            print("Invalid move.")
-            continue
-        dr, dc = moves[cmd]
-        r, c = next((r, c) for r, row in enumerate(grid)
-                    for c, v in enumerate(row) if v == 'P')
-        nr, nc = r + dr, c + dc
-        if 0 <= nr < len(grid) and 0 <= nc < len(grid[0]) and grid[nr][nc] != '#':
-            grid[r][c] = '.'
-            grid[nr][nc] = 'P'
-            if grid[nr][nc] == 'G':
-                print("You reached the goal!")
-                break
-        else:
-            print("Can't move there.")
+        grid = init_grid(pos)
+        draw(grid, pos)
+        cmd = input("Move (w/a/s/d) or q to quit: ").strip().lower()
+        if cmd == 'q': break
+        if cmd in 'wasd': pos = move(pos, cmd)
+        print("\n" * 2)
 
 if __name__ == "__main__":
     main()
